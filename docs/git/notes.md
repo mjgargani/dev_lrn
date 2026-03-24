@@ -138,3 +138,31 @@ Quando você toma ações, praticamente tudo é adicionado como informação ao 
 
 #### Os três estados
 
+**Os estados fundamentais que um arquivo pode ter no git são: modified (modificado), staged (em ensaio) e committed (submetido)**:
+
+- **Modified** significa que houve alteração em um arquivo mas este não foi submetido ao database, ainda;
+- **Staged** significa que você marcou os arquivos modificados nessa versão para submissão de um novo snapshot (commit);
+- **Committed** significa que a nova informação foi apropriadamente armazenada no seu database local.
+
+Isso nos leva as três principais seções de um projeto Git: A "working tree" (Algo como "a ramificação/árvore do seu trabalho atual", a raiz do projeto); "Staging Area" (Espaço de ensaio); diretório ".git" (Repositório).
+
+```mermaid
+flowchart TD
+    A[Working tree - pasta raiz do trabalho atual]-->B([Ensaio de correções - alterações])-->C[Palco do ensaio - Staging]-->D([Submissão - Commit])-->E[Diretório .git - Repositório]-->F([Consumo do repositório total ou parcial - Checkout])-->A
+```
+
+_(Grifo meu: É possível trabalhar em subníveis de um projeto - deslocar a raiz, exemplo, uma pasta que possuí um subnível `./functions` pode querer ter alterações a partir dessa raiz, ao invés de sua base `./` reduzindo o escopo daquilo que está sendo trabalhado)_
+
+O escopo do trabalho (working tree) é um consumo único de alguma versão do projeto. Esses arquivos são consumidos (Pulled out) do database na pasta .git e adicionados "a sua mesa de trabalho" no disco, para que você as use ou modifique.
+
+A área de "staging" é um arquivo, gerado contendo seu diretório Git e que armazena informação sobre o que será alterado na próxima submissão (commit). Seu nome técnico no git é "index" (índice).
+
+O diretório Git é onde a ferramenta armazena os metadados e o banco de dados de objetos para seu projeto. Essa é parte mais importante para o Git e é aquilo que é copiado quando você clona um repositório de outro computador.
+
+**O fluxo de trabalho do Git (Também chamado de "Gitflow")** ocorre de maneira mais ou menos como:
+
+1. Você modifica arquivos no "working tree".
+2. Você **seletivamente** põe no palco de ensaio (staging), as alterações que gostaria que fossem parte da nova submissão. Nada mais.
+3. Você submete as alterações que foram "ensaiadas", o que **compromete** essas alterações com o repositório local `.git`.
+
+Se uma versão particular de um arquivo existir no diretório Git, é considerado **submetido/comprometido** (committed). Se foi modificado e enviado à area de ensaio, é considerado **staged**. Se foi consumido e alterado, mas não foi enviado para ensaio, é considerado **modificado** (modified).
