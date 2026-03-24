@@ -1,4 +1,5 @@
 # Fichamento do livro "Pro Git" (2014) de Scoot Chacon e Ben Straub
+[Download](https://git-scm.com/book/en/v2)
 
 ## Introdução
 
@@ -159,10 +160,40 @@ A área de "staging" é um arquivo, gerado contendo seu diretório Git e que arm
 
 O diretório Git é onde a ferramenta armazena os metadados e o banco de dados de objetos para seu projeto. Essa é parte mais importante para o Git e é aquilo que é copiado quando você clona um repositório de outro computador.
 
-**O fluxo de trabalho do Git (Também chamado de "Gitflow")** ocorre de maneira mais ou menos como:
+**O fluxo padrão de trabalho do Git (Não confundir com o chamado "Gitflow")** ocorre de maneira mais ou menos como:
 
 1. Você modifica arquivos no "working tree".
 2. Você **seletivamente** põe no palco de ensaio (staging), as alterações que gostaria que fossem parte da nova submissão. Nada mais.
 3. Você submete as alterações que foram "ensaiadas", o que **compromete** essas alterações com o repositório local `.git`.
 
+> O "Git Flow" é um fluxo **organizacional** das ramificações (branching model) de um repositório Git. Foi proposto por Vincent Driessen em 2010 em seu post "A successful Git branching model". A ideia é manter camadas que identifiquem o estágio daquela parte do projeto, como numa espécie de "esteira de produção em uma fábrica". É onde você provavelmente vai identificar o ramo "main" como o ramo "em produção" (aquilo que vai pro cliente) e demais ramos, como "test","dev", "feat:X", "fix:Y" como formas semânticas de identificar em que parte da "esteira de produção" está essa parte do produto.
+
 Se uma versão particular de um arquivo existir no diretório Git, é considerado **submetido/comprometido** (committed). Se foi modificado e enviado à area de ensaio, é considerado **staged**. Se foi consumido e alterado, mas não foi enviado para ensaio, é considerado **modificado** (modified).
+
+### A linha de comando (CLI)
+
+Há várias maneiras diferentes de usar o Git. Existem as ferramentas originais de linha de comando (command-line tools) e existem várias interfaces gráficas com diversas funcionalidades. O livro irá tratar do Git, utilizando a abordagem tradicional, via linha de comando, dado que por esse caminho, é possível rodar **todos** os comandos Git (enquanto as interfaces, em geral, implementam um recorte dos comandos mais utilizados). Aprender a interface gráfica não garante que você aprenda os comando da CLI, o inverso é mais provável, no entanto. Enquanto uma interface gráfica _é uma questão de gosto pessoal_, **todos** os usuários vão possuir as interfaces de linha de comando disponíveis após a instalação do Git.
+
+> Grifo meu: e é muito provavelmente o que cairá em concursos, em caso de uso prático da ferramenta.
+
+#### Instalação do Git
+
+> Não vou fazer fichamento dessa parte, pois em se tratando de instalação de software, o caminho costuma ser pragmático. Exemplo: No Windows, a instalação pode ser feita via .msi; no Linux, via gerenciador de pacotes (No Linux Mint - meu caso - a instalação pode ser feita com `sudo apt install git`). O uso do CLI, em todos os contextos, é praticamente igual, onde temos que tomar um ou outro cuidado (exemplo, formas de gerir permissões e usuários, sequência de fim de linha). Quando for o caso de alguma particularidade, farei uma descrição, mas aqui, não vejo necessidade.
+
+Consultar o [manual](https://git-scm.com/install/).
+
+#### Primeira configuração
+
+A configuração do Git não é algo que vem definido por padrão após a instalação. Evidentemente que já pode usa-lo para clonar repositórios e navegar, mas você provavelmente irá querer customiza-lo para seu uso, antes. Para isso, a ferramenta padrão do git é o `git config` que permite que você defina variáveis de configuração que controlam todos os aspectos pelos quais o Git opera.
+
+Antes, é importante saber que é possível configurar o git em três escopos:
+
+>Grifo meu: Importante frisar que, quando lidamos com CLIs na esmagadora parte das vezes: não possuímos uma interface gráfica na experiência "selecione e altere". Provavelmente há alguma interface gráfica para isso. Mas em essência, uma interface gráfica para esse contexto nada mais é do que uma forma de alterar o arquivo de configuração da ferramenta. Ou seja, pra diversos softwares que operam como serviço, a configuração é feita via variáveis de ambiente [do sistema operacional hospedeiro], e quando o serviço sobe, essas variáveis são lidas e a ferramenta opera conforme essas customizações. Entender essa abstração é importante, sobretudo em se tratando de desenvolvimento web, pois é a maneira mais convencional de personalizar um determinado serviço.
+
+1. Arquivo `[path]/etc/gitconfig` (onde `[path]` pode variar conforme S.O): Os valores aplicados aqui, vão ser aplicados ao **sistema como um todo**, ou seja, cada usuário do computador que utilizar o Git, vai, primariamente, resgatar customizações desse arquivo (caso exista). O parâmetro `--system` é utilizado para quando se quer utilizar a ferramenta para configurar o Git a nível de sistema.
+2. Arquivo `~/.gitconfig` ou `~/.config/git/config` (onde `~` indica que a raiz parte da pasta do usuário, exemplo, no linux, as pastas de usuário ficam em `/home/<nome_usuario>`): Os valores aplicados aqui vão servir especificamente para o usuário, quando ele estiver ativo. O parâmetro `--global` é utilizado para quando se quer utilizar a ferramenta para configurar o Git a nível de usuário.
+3. Arquivo `config` dentro do diretório Git de um repositório (`<repo>/.git/config`): Segue a mesma regra dos demais, mas a nível de repositório unitário (o parâmetro `--local` deve ser utilizado nesse contexto).
+
+Importante notar que cada nível sobrescreve as regras do nível superior, por tanto, o arquivo em `.git/config` vai sempre ter preferência sobre o escopo de usuário (que por sua vez tem preferência sobre o escopo do sistema).
+
+> Aqui estou usando como referência o Linux, segundo a documentação, há diferenças na onde o arquivo deve estar localizado no Windows (Exemplo, a nível de usuário o arquivo deve estar em `C:\Users\$USER`, na maior parte das vezes)
