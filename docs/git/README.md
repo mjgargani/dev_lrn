@@ -188,7 +188,7 @@ A configuração do Git não é algo que vem definido por padrão após a instal
 
 Antes, é importante saber que é possível configurar o git em três escopos:
 
->Grifo meu: Importante frisar que, quando lidamos com CLIs na esmagadora parte das vezes: não possuímos uma interface gráfica na experiência "selecione e altere". Provavelmente há alguma interface gráfica para isso. Mas em essência, uma interface gráfica para esse contexto nada mais é do que uma forma de alterar o arquivo de configuração da ferramenta. Ou seja, pra diversos softwares que operam como serviço, a configuração é feita via variáveis de ambiente [do sistema operacional hospedeiro], e quando o serviço sobe, essas variáveis são lidas e a ferramenta opera conforme essas customizações. Entender essa abstração é importante, sobretudo em se tratando de desenvolvimento web, pois é a maneira mais convencional de personalizar um determinado serviço.
+>Grifo meu: Importante frisar que, quando lidamos com CLIs na esmagadora parte das vezes: não possuímos uma interface gráfica na experiência "selecione e altere". Provavelmente há alguma interface gráfica para isso. Mas em essência, uma interface gráfica para esse contexto nada mais é do que uma forma de alterar o arquivo de configuração da ferramenta. Ou seja, pra diversos softwares que operam como serviço, a configuração é feita via arquivo de configuração **INI**(por exemplo) ou variáveis de ambiente [do sistema operacional hospedeiro], e quando o serviço sobe, essas preferências e/ou variáveis são lidas e a ferramenta opera conforme essas customizações. Entender essa abstração é importante, sobretudo em se tratando de desenvolvimento web, pois é a maneira mais convencional de personalizar um determinado serviço.
 
 1. Arquivo `[path]/etc/gitconfig` (onde `[path]` pode variar conforme S.O): Os valores aplicados aqui, vão ser aplicados ao **sistema como um todo**, ou seja, cada usuário do computador que utilizar o Git, vai, primariamente, resgatar customizações desse arquivo (caso exista). O parâmetro `--system` é utilizado para quando se quer utilizar a ferramenta para configurar o Git a nível de sistema.
 2. Arquivo `~/.gitconfig` ou `~/.config/git/config` (onde `~` indica que a raiz parte da pasta do usuário, exemplo, no linux, as pastas de usuário ficam em `/home/<nome_usuario>`): Os valores aplicados aqui vão servir especificamente para o usuário, quando ele estiver ativo. O parâmetro `--global` é utilizado para quando se quer utilizar a ferramenta para configurar o Git a nível de usuário.
@@ -197,3 +197,81 @@ Antes, é importante saber que é possível configurar o git em três escopos:
 Importante notar que cada nível sobrescreve as regras do nível superior, por tanto, o arquivo em `.git/config` vai sempre ter preferência sobre o escopo de usuário (que por sua vez tem preferência sobre o escopo do sistema).
 
 > Aqui estou usando como referência o Linux, segundo a documentação, há diferenças na onde o arquivo deve estar localizado no Windows (Exemplo, a nível de usuário o arquivo deve estar em `C:\Users\$USER`, na maior parte das vezes)
+
+#### Sua identidade
+
+Essa parte é importante pois você provavelmente vai querer assinar suas alterações em um projeto (sobretudo se usar repositórios com origem remota). Os dois atributos fundamentais para sua identificação (considerando o escopo de usuário) são:
+
+```bash
+$ git config --global user.name "John Doe"
+$ git config --global user.email johndoe@example.com
+```
+
+Criando o arquivo dentro do escopo definido (usuário), você deve ter um arquivo de configuração (**INI**) semelhante a esse:
+
+```bash
+~$ cat .gitconfig 
+[user]
+	name = John Doe
+	email = johndoe@example.com
+```
+
+> A documentação também menciona que o é possível ver as configurações antes de configurar. Isso não ocorreu na minha instalação (Linux Mint). Aqui, só após a definição de algumas variáveis dentro de um determinado escopo, é que os arquivos foram criados e podem ser vistos com o comando `git config --list --show-origin`.
+
+#### Seu editor
+
+No Windows, algumas dessas informações são perguntadas durante a instalação, no Linux, caso você queira usar um editor alternativo para resolução de conflitos ou mensagens diversas, você pode definir com `git config --global core.editor nano`.
+
+#### Sua ramificação principal
+
+Tradicionalmente chamada de `master`, contudo, recomendo fortemente para que seja alterado para `main`, por conta [desta convenção](https://sidthakur3519.medium.com/githubs-default-branch-naming-convention-468620cf26ec). Alterar posteriormente é trabalhoso e pode "sujar" o repositório.
+
+```bash
+git config --global init.defaultBranch main
+```
+
+Lembre-se de checar as configurações com `git config --list`.
+
+#### Obtendo ajuda
+
+>Grifo meu: Importante para praticamente qualquer aplicação cli (pelo menos no Linux): Quando você manda um comando `<app> help|--help|-?` no terminal, em geral, os sistemas Unix estão retornando pra você um fragmento do **manual paginado** (com `man` e `less` por debaixo do panos) deste utilitário. Por exemplo, em sistemas unix: `man git-config` e `git help config` são caminhos para o mesmo propósito, que é jogar pra documentação e definição de parâmetros daquele utilitário em específico. (E por ser offline-first, é uma mão na roda, caso vc queira consultar alguma definição em específico). O Windows também tem isso no PowerShell, porém ele prioriza páginas HTML ao invés de abrir um leitor estilo `less`, dentro do próprio terminal.
+
+Utilização, no caso do Git:
+
+```bash
+$ git help <verb>
+$ git <verb> --help
+$ man git-<verb>
+```
+
+Exemplo de uso: `$ git help config`
+Há também um comando que é um guia rápido e conciso do uso de um determinado atributo/função, exemplo:
+
+```bash
+~$ git add -h
+uso: git add [<options>] [--] <pathspec>...
+
+    -n, --[no-]dry-run    dry run
+    -v, --[no-]verbose    detalhado
+
+    -i, --[no-]interactive
+                          interactive picking
+    -p, --[no-]patch      select hunks interactively
+    -e, --[no-]edit       editar diff atual e aplicar
+    -f, --[no-]force      permitir a adição de arquivo que, de outra forma, foram ignorados
+    -u, --[no-]update     atualizar arquivos rastreados
+    --[no-]renormalize    renormalize EOL of tracked files (implies -u)
+    -N, --[no-]intent-to-add
+                          record only the fact that the path will be added later
+    -A, --[no-]all        add changes from all tracked and untracked files
+    --[no-]ignore-removal ignore paths removed in the working tree (same as --no-all)
+    --[no-]refresh        don't add, only refresh the index
+    --[no-]ignore-errors  just skip files which cannot be added because of errors
+    --[no-]ignore-missing check if - even missing - files are ignored in dry run
+    --[no-]sparse         allow updating entries outside of the sparse-checkout cone
+    --[no-]chmod (+|-)x   override the executable bit of the listed files
+    --[no-]pathspec-from-file <arquivo>
+                          read pathspec from file
+    --[no-]pathspec-file-nul
+                          with --pathspec-from-file, pathspec elements are separated with NUL character
+```
